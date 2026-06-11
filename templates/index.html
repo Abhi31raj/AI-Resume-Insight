@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Insight</title>
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.css" rel="stylesheet">
+
+    <!-- i18next CDN -->
+    <script src="https://unpkg.com/i18next@21.6.0/i18next.min.js"></script>
+</head>
+<body style="background: linear-gradient(to top, #0e0e0e, #0e0c0c);">
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #173927;">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <img src="{{ url_for('static', filename='image/AI Resume Insight.png') }}" 
+             onclick="alert('Welcome to AI Resume Insight,Now you can explore AI Resume Insight')" 
+             alt="Tech Pulse Logo" 
+             id="logo" 
+             style="width: 80px; height: 80px; margin-left:0px;">
+        <a style="font-size: 35px; color: rgb(255, 255, 255); font-family: 'Arial Rounded MT Bold'">AI Resume Insight</a>
+        
+        <!-- Navbar Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="{{ url_for('home') }}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="{{ url_for('contact') }}">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="{{ url_for('AI_Assistant') }}">
+                        <i class="fas fa-robot"></i> Resumate
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="{{ url_for('feedback') }}">
+                        <i class="fas fa-comment-dots"></i> Feed Back
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="https://elevenlabs.io/app/talk-to?agent_id=agent_01jx1y2hrwf2wrw5w1k2p08dz5" target="_blank" rel="noopener">
+                        <i class="fas fa-robot"></i> Ai agent
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link active fs-5 mx-3" href="/">
+                        <i class="fas fa-sign-out-alt"></i> Log Out
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div id="welcome-msg"></div>
+
+<div class="welcome-message" style="background: linear-gradient(to right, #111111, #000000); color: white; padding: 20px; border-radius: 10px;">
+    <h2>Welcome to AI Resume Insight {{ username }}</h2>
+</div>
+
+    <!-- Hero Section -->
+    <header class="hero text-center py-5"  style="background: linear-gradient(to right, #002fff, #ff0000); background-size: cover; color: #ffffff; border-radius: 2% / 2%; padding: 20px;">
+        <div class="container">
+            <h1 class="display-4" id="hero-title"></h1>
+            <p class="lead" id="hero-desc"></p>
+            <a href="#news-feed" class="btn btn-lg" style="background-color: #ffffff; color: rgb(1, 1, 1); font-size: 30px; padding: 20px 30px;" id="explore-btn"></a>
+        </div>
+    </header>
+    
+    <!-- News Feed Section -->
+    <section id="news-feed" class="container my-5" style="background-color:#2d2d2d ;border-radius: 4% / 15% ">
+        <h2 class="text-center mb-4" id="news-feed-title" style="color: #ffffff; "></h2>
+        <div class="row"></div>
+    </section>
+
+    <style>
+        /* Enhanced Card Styles with Glow and Hover Effects */
+        .enhanced-card {
+            background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 50%, #1a202c 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 
+                        0 0 40px rgba(66, 153, 225, 0.1),
+                        inset 0 1px 0 #fdf6f61a;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .enhanced-card.job-card {
+            background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 50%, #1a2c1a 100%);
+            border: 1px solid rgba(72, 187, 120, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 
+                        0 0 40px rgba(72, 187, 120, 0.1),
+                        inset 0 1px 0 rgba(255, 253, 253, 0.1);
+        }
+
+        .enhanced-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .enhanced-card:hover::before {
+            opacity: 1;
+        }
+
+        .enhanced-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4), 
+                        0 0 50px rgba(59, 130, 246, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .enhanced-card.job-card:hover {
+            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.4), 
+                        0 0 50px rgba(16, 185, 129, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .enhanced-card .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-circle {
+            width: 140px;
+            height: 140px;
+            border: 4px solid #e0e7ff;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-card:hover .profile-circle {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+
+        .enhanced-card.job-card:hover .profile-circle {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+
+        .card-title {
+            color: #1f2937;
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-card:hover .card-title {
+            color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        .enhanced-card.job-card:hover .card-title {
+            color: #10b981;
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-card:hover .card-subtitle {
+            color: #374151;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-card:hover .card-description {
+            color: #4b5563;
+        }
+
+        .social-icons {
+            margin-bottom: 25px;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            margin: 0 12px;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-3px) scale(1.2);
+            color: #3b82f6;
+        }
+
+        .enhanced-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            border-radius: 30px;
+            font-weight: 700;
+            width: 85%;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .enhanced-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .enhanced-btn:hover::before {
+            left: 100%;
+        }
+
+        .enhanced-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #65739f);
+        }
+
+        .enhanced-btn.job-btn {
+            background: linear-gradient(135deg, #10b981, #047857);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .enhanced-btn.job-btn:hover {
+            background: linear-gradient(135deg, #059669, #065f46);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { box-shadow: 0 8px 25px rgba(137, 27, 27, 0.15); }
+            to { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2); }
+        }
+
+
+        
+
+/* New Feature Showcase Styles */
+.feature-showcase {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 50px;
+            margin: 70px 100px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.1) 75%), 
+                        linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            opacity: 0.1;
+        }
+
+        .feature-showcase .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        .showcase-image {
+            width: 100%;
+            max-width: 500px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            margin-bottom: 40px;
+        }
+
+        .showcase-image:hover {
+            transform: scale(1.05) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .showcase-title {
+            color: #ffffff;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .showcase-description {
+            color: #f8fafc;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .official-link {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #ffffff, #f1f5f9);
+            color: #1e293b;
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .official-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .official-link:hover::before {
+            left: 100%;
+        }
+
+        .official-link:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .official-link i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: #ffffff;
+            margin: 10px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .feature-showcase {
+                padding: 40px 20px;
+                margin: 30px 10px;
+            }
+
+            .showcase-title {
+                font-size: 2rem;
+            }
+
+            .showcase-description {
+                font-size: 1.1rem;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-item {
+                margin: 15px 0;
+            }
+        }
+
+
+
+        /* Skills Analysis Section Styles */
+        .skills-analysis-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            padding: 80px 0;
+            border-radius: 30px;
+            margin: 60px 70px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skills-analysis-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.03"/><circle cx="90" cy="40" r="0.5" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            pointer-events: none;
+        }
+
+        .analysis-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        .analysis-header {
+            margin-bottom: 60px;
+        }
+
+        .analysis-title {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .analysis-subtitle {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .chart-container {
+            margin: 60px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        0 0 50px rgba(59, 130, 246, 0.1);
+            transition: all 0.4s ease;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .chart-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+                        0 0 80px rgba(59, 130, 246, 0.2);
+        }
+
+        .trend-chart {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .chart-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .chart-overlay:hover {
+            background: rgba(59, 130, 246, 1);
+            transform: scale(1.05);
+        }
+
+        .chart-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .analysis-content {
+            margin-top: 60px;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 25px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .content-title {
+            color: #1e293b;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .insights-grid {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .insight-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+            border-left-color: #1d4ed8;
+        }
+
+        .insight-icon {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .insight-content h4 {
+            color: #1e293b;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .insight-content p {
+            color: #475569;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .action-section {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .action-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .action-description {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #ffffff, #f1f5f9);
+            color: #1e293b;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .analysis-title {
+                font-size: 1.8rem;
+            }
+
+            .analysis-subtitle {
+                font-size: 1rem;
+            }
+
+            .chart-wrapper {
+                padding: 20px;
+            }
+
+            .content-card {
+                padding: 30px 20px;
+            }
+
+            .insight-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .insight-icon {
+                margin: 0 auto;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        /* Animation for scroll reveal */
+        .skills-analysis-section .chart-wrapper,
+        .skills-analysis-section .content-card {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideUp 0.8s ease forwards;
+        }
+
+        .skills-analysis-section .content-card {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        
+    </style>
+
+    <!-- Team Member Cards Section -->
+    <section class="container my-5">
+        <div class="row justify-content-center">
+            <!-- First Team Member Card -->
+            <div class="col-lg-5 col-md-6 mb-4">
+                <div class="enhanced-card pulse-glow floating-animation h-100">
+                    <div class="card-content text-center">
+                        <!-- Profile Circle -->
+                        <div class="profile-circle">
+                            <span style="color: #6b7280; font-size: 15px; font-weight: 600;">AI Analysis</span>
+                        </div>
+                        
+                        <!-- Name and Title -->
+                        <h4 class="card-title">RESUME ANALYSIS</h4>
+                        <p class="card-subtitle">AI-Powered Resume Insights</p>
+                        
+                        <!-- Description -->
+                        <p class="card-description">
+                            Get comprehensive analysis of your resume with AI-powered insights, including skill assessment, ATS compatibility, and improvement suggestions for better job matching.
+                        </p>
+                        
+                        <!-- Social Icons -->
+                        
+                        
+                        <button onclick="window.location.href='/aianalysis1'" class="enhanced-btn">
+                            <i class="fas fa-chart-line me-2"></i>Start Analysis
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Team aianalysis1 Member Card -->
+            <div class="col-lg-5 col-md-6 mb-4">
+                <div class="enhanced-card job-card pulse-glow floating-animation h-100" style="animation-delay: -3s;">
+                    <div class="card-content text-center">
+                        <!-- Profile Circle -->
+                        <div class="profile-circle">
+                            <span style="color: #6b7280; font-size: 15px; font-weight: 600;">Job Matcher</span>
+                        </div>
+                        
+                        <!-- Name and Title -->
+                        <h4 class="card-title">JOB MATCHING</h4>
+                        <p class="card-subtitle">Smart Career Opportunities</p>
+                        
+                        <!-- Description -->
+                        <p class="card-description">
+                            Discover personalized job opportunities that perfectly match your skills and experience using advanced AI algorithms to find your ideal career path and get well practice for job and intership interview.
+                        </p>
+                        
+                        <!-- Social Icons -->
+                      
+                        
+                        <!-- Job Matching Button -->
+                        <button onclick="window.location.href='/aianalysis2'" class="enhanced-btn job-btn"> 
+                            <i class="fas fa-briefcase me-2"></i>Find Jobs
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="cards-container container flex" id="cards-container">
+            <!-- News cards will be dynamically inserted here -->
+        </div>
+    </main>
+    <section class="feature-showcase">
+        <div class="content-wrapper text-center">
+            <!-- Feature Image -->
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='350' viewBox='0 0 500 350'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='350' fill='url(%23bg)' rx='20'/%3E%3Ccircle cx='125' cy='100' r='40' fill='%23ffffff' opacity='0.9'/%3E%3Ccircle cx='250' cy='80' r='30' fill='%23ffffff' opacity='0.7'/%3E%3Ccircle cx='375' cy='120' r='35' fill='%23ffffff' opacity='0.8'/%3E%3Crect x='50' y='200' width='400' height='20' fill='%23ffffff' opacity='0.6' rx='10'/%3E%3Crect x='80' y='240' width='340' height='15' fill='%23ffffff' opacity='0.5' rx='7'/%3E%3Crect x='100' y='270' width='300' height='15' fill='%23ffffff' opacity='0.4' rx='7'/%3E%3Ctext x='250' y='50' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='%23ffffff'%3EAI Resume Platform%3C/text%3E%3Ctext x='125' y='180' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23ffffff'%3EAnalysis%3C/text%3E%3Ctext x='250' y='160' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23ffffff'%3EMatching%3C/text%3E%3Ctext x='375' y='200' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23ffffff'%3EOptimization%3C/text%3E%3C/svg%3E"
+                 alt="AI Resume Insight Platform"
+                 class="showcase-image">
+
+            <!-- Feature Title -->
+            <h2 class="showcase-title">Next-Generation AI Resume Technology</h2>
+
+            <!-- Statistics Row -->
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">Success Rate</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10K+</span>
+                    <span class="stat-label">Resumes Analyzed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Companies Connected</span>
+                </div>
+            </div>
+
+            <!-- Feature Description -->
+            <p class="showcase-description">
+                Experience the future of career advancement with our revolutionary AI-powered resume analysis platform. 
+                Our cutting-edge technology combines machine learning algorithms with industry expertise to provide 
+                personalized insights, optimize your resume for ATS systems, and connect you with the perfect job opportunities. 
+                Transform your career journey with intelligent recommendations, real-time feedback, and data-driven strategies 
+                that have helped thousands of professionals land their dream jobs.
+            </p>
+
+            <!-- Official Website Link -->
+            <a href="https://resume.io/" class="official-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i>
+                Visit Official Website
+            </a>
+        </div>
+    </section>
+
+</section>
+
+<!-- Skills Trends Analysis Section -->
+<section class="skills-analysis-section">
+    <div class="container">
+        <div class="analysis-wrapper">
+            <!-- Section Header -->
+            <div class="analysis-header text-center">
+                <h2 class="analysis-title">
+                    <i class="fas fa-chart-bar me-3"></i>
+                    Skill, Education & Experience Trends in Indian Resumes – 2024
+                </h2>
+                <p class="analysis-subtitle">
+                    Comprehensive analysis of current market trends and skill demands across different educational backgrounds
+                </p>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <img src="{{ url_for('static', filename='image/data2024.png') }}";base64,iVBORw0KGgoAAAANSUhEUgAABDgAAAK4CAYAAACrpuIdAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD+naQAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjAsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+17YcXAAAgAElEQVR4nOzde3RU9b338c/MJJNJJpNkEhIgCQmXcBMQCKAoKlqxWm+01mq1Wm211tO6Wm171tNznvOc85z2PN1tn9a2p6e2T9vTWlu11rZae71VrVcUUQTkIhcJt5CQhCQzuSczycxm//4IJBBuCcxkz8z79VprLWZmdvb+JvzI/u7v/n5/PsuyLAAAAAAAAOzYf/FY5DhiOAAAAAAAALYfBQcAAAAAAADs2H/xWOQ4Yji2HwAAAAAAAOzYf/FY5DhiOLYfAAAA" 
+                         alt="Skill, Education & Experience Trends in Indian Resumes 2024"
+                         class="trend-chart"
+                         loading="lazy">
+                    
+                    <!-- Chart Overlay Information -->
+                    <div class="chart-overlay">
+                        <div class="chart-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Interactive Data Visualization</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Description -->
+            <div class="analysis-content">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="content-card">
+                            <h3 class="content-title">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Key Insights from 2024 Resume Analysis
+                            </h3>
+                            
+                            <div class="insights-grid">
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Educational Background Distribution</h4>
+                                        <p>The chart reveals that <strong>B.Tech graduates</strong> dominate the technical landscape, while <strong>MBA professionals</strong> show strong presence in management roles. PhD holders demonstrate specialized expertise in research-oriented positions.</p>
+                                    </div>
+                                </div>
+
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-code"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Top Technical Skills in Demand</h4>
+                                        <p><strong>Python, Java, and SQL</strong> emerge as the most sought-after programming languages. Cloud technologies, cybersecurity, and machine learning skills show significant growth trends across all educational backgrounds.</p>
+                                    </div>
+                                </div>
+
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Experience Level Patterns</h4>
+                                        <p>The data shows a correlation between educational qualifications and experience levels. <strong>Senior professionals</strong> with 5+ years of experience dominate leadership and specialized technical roles.</p>
+                                    </div>
+                                </div>
+
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-industry"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Industry-Specific Trends</h4>
+                                        <p>Technology sector continues to lead in hiring, followed by finance and healthcare. <strong>Emerging technologies</strong> like AI/ML, blockchain, and data science show exponential growth in demand.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Section -->
+                            <div class="action-section">
+                                <h4 class="action-title">
+                                    <i class="fas fa-rocket me-2"></i>
+                                    Optimize Your Resume Based on These Trends
+                                </h4>
+                                <p class="action-description">
+                                    Use our AI-powered analysis to align your resume with current market demands and increase your chances of landing your dream job.
+                                </p>
+                                <div class="action-buttons">
+                                   
+                                    <button onclick="window.location.href='/aianalysis1'" class="action-btn primary">
+                                        <i class="fas fa-search me-2"></i>
+                                        Analyze My Resume
+                                    </button>
+                                    <button onclick="window.location.href='/aianalysis2'" class="action-btn secondary">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                         Coding Challenge
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    
+    <!-- Bootstrap JS and dependencies (CDN) -->
+    <script src="{{ url_for('static', filename='type.js') }}"></script>
+
+    <script>
+        // Initialize i18next with translation resources
+        i18next.init({
+            lng: 'en', // Default language
+            resources: {
+                en: {
+                    translation: {
+                        "hero-title": "Make Your Resume Work Smarter, Not Harder",
+                        "hero-desc": "Discover the newest AI-powered resume insights, hiring tech, and game-changing career tools from across the globe..",
+                        "explore-btn": "Newest AI Resume Developments",
+                        "news-feed-title": "Recent AI Talent Trends",
+                        "home-link": "Home",
+                        "categories-link": "Categories",
+                        "contact-link": "Contact",
+                        "profile-link": "Profile"
+                    }
+                },
+            }
+        }, (err, t) => {
+            // Update all elements with translations
+            document.getElementById('hero-title').innerText = i18next.t('hero-title');
+            document.getElementById('hero-desc').innerText = i18next.t('hero-desc');
+            document.getElementById('explore-btn').innerText = i18next.t('explore-btn');
+            document.getElementById('news-feed-title').innerText = i18next.t('news-feed-title');
+            
+            // Check if elements exist before trying to update them
+            const homeLink = document.getElementById('home-link');
+            const categoriesLink = document.getElementById('categories-link');
+            const contactLink = document.getElementById('contact-link');
+            const profileLink = document.getElementById('profile-link');
+            
+            if (homeLink) homeLink.innerText = i18next.t('home-link');
+            if (categoriesLink) categoriesLink.innerText = i18next.t('categories-link');
+            if (contactLink) contactLink.innerText = i18next.t('contact-link');
+            if (profileLink) profileLink.innerText = i18next.t('profile-link');
+        });
+
+        // Change language on selection (only if language selector exists)
+        const languageSelect = document.getElementById('languageSelect');
+        if (languageSelect) {
+            languageSelect.addEventListener('change', (e) => {
+                i18next.changeLanguage(e.target.value, (err, t) => {
+                    document.getElementById('hero-title').innerText = t('hero-title');
+                    document.getElementById('hero-desc').innerText = t('hero-desc');
+                    document.getElementById('explore-btn').innerText = t('explore-btn');
+                    document.getElementById('news-feed-title').innerText = t('news-feed-title');
+                    
+                    const homeLink = document.getElementById('home-link');
+                    const categoriesLink = document.getElementById('categories-link');
+                    const contactLink = document.getElementById('contact-link');
+                    const profileLink = document.getElementById('profile-link');
+                    
+                    if (homeLink) homeLink.innerText = t('home-link');
+                    if (categoriesLink) categoriesLink.innerText = t('categories-link');
+                    if (contactLink) contactLink.innerText = t('contact-link');
+                    if (profileLink) profileLink.innerText = t('profile-link');
+                });
+            });
+        }
+
+        // Mock data (replace this with an actual API call or database query)
+        const newsData = [
+            { id: 1, category: 'ai', title: 'AI Advancements', description: 'Latest in AI', source: 'TechWorld', image: 'path/to/image1.jpg', link: '#' },
+            { id: 2, category: 'robotics', title: 'Robotics in 2024', description: 'New trends in robotics', source: 'RoboTech', image: 'path/to/image2.jpg', link: '#' },
+            { id: 3, category: 'invention', title: 'New Invention', description: 'Innovative gadget', source: 'InventDaily', image: 'path/to/image3.jpg', link: '#' },
+            { id: 4, category: 'development', title: 'Tech Development', description: 'Breakthrough in tech', source: 'DevUpdates', image: 'path/to/image4.jpg', link: '#' },
+            { id: 5, category: 'product-launches', title: 'Product Launch', description: 'New product release', source: 'LaunchZone', image: 'path/to/image5.jpg', link: '#' }
+        ];
+
+        // Function to render filtered news
+        function renderNews(category) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = ''; // Clear existing news
+            const filteredNews = category ? newsData.filter(news => news.category === category) : newsData;
+
+            filteredNews.forEach(news => {
+                const template = document.querySelector('#template-news-card').content.cloneNode(true);
+                template.querySelector('#news-link').href = news.link;
+                template.querySelector('#news-img').src = news.image;
+                template.querySelector('#news-title').textContent = news.title;
+                template.querySelector('#news-source').textContent = news.source;
+                template.querySelector('#news-desc').textContent = news.description;
+                container.appendChild(template);
+            });
+        }
+
+        // Event listener for category selection
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = e.target.dataset.category; // Get category from data attribute
+                renderNews(category); // Render filtered news
+            });
+        });
+
+        // Initial render of all news
+        renderNews();
+
+        // Fetch username from the server-side session (passed via Flask)
+        window.onload = function() {
+            fetch('/get-username')  // Fetch the username from Flask
+            .then(response => response.json())
+            .then(data => {
+                const welcomeMessage = document.querySelector('.welcome-message h2');
+                if (data.username) {
+                    // Update the welcome message with the username
+                    welcomeMessage.textContent = `Welcome to Tech Pulse, ${data.username}`;
+                } else {
+                    // Show a generic message for guest users
+                    welcomeMessage.textContent = 'Welcome to Tech Pulse, Guest!';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching username:', error);
+            });
+        };
+
+        // After successful registration or login
+        fetch('/get-username')  // Fetch the updated username from Flask
+            .then(response => response.json())
+            .then(data => {
+                if (data.username) {
+                    // Update the username in the welcome message
+                    document.querySelector('.welcome-message h2').textContent = `Welcome to Tech Pulse, ${data.username}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching username:', error);
+            });
+            
+        fetch('/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, email, password })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message) {
+                // Redirect to the main page after successful registration
+                window.location.href = result.redirect_url;
+            } else {
+                // Show error message
+                alert(result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error during signup:', error);
+        });
+
+         // Add smooth scrolling for anchor links
+         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.enhanced-card, .feature-showcase').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(50px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(el);
+        });
+
+        // Add typing effect to the showcase title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize typing effect when showcase comes into view
+        const showcaseObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const title = entry.target.querySelector('.showcase-title');
+                    const originalText = title.textContent;
+                    typeWriter(title, originalText, 80);
+                    showcaseObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const showcase = document.querySelector('.feature-showcase');
+        if (showcase) {
+            showcaseObserver.observe(showcase);
+        }
+
+        // Add counter animation for statistics
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            function updateCounter() {
+                start += increment;
+                if (start < target) {
+                    element.textContent = Math.floor(start) + (target >= 1000 ? 'K+' : '%');
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target >= 1000 ? 
+                        (target >= 10000 ? '10K+' : target/1000 + 'K+') : 
+                        target + '%';
+                }
+            }
+            updateCounter();
+        }
+
+        // Initialize counter animations
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach((stat, index) => {
+                        const targets = [95, 10000, 500];
+                        setTimeout(() => {
+                            animateCounter(stat, targets[index]);
+                        }, index * 200);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.8 });
+
+        const statsRow = document.querySelector('.stats-row');
+        if (statsRow) {
+            statsObserver.observe(statsRow);
+        }
+    </script>
+</body>
+</html>

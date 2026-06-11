@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Resume Analyzer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Embedded CSS -->
+  <style>
+    /* General Page Styles */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Container Styling */
+    .container {
+      max-width: 1300px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 40px;
+      box-shadow: 50 50px 60px rgba(1, 1, 1, 1);
+    }
+
+    /* Headings */
+    h1, h3 {
+      text-align: center;
+      color: #000000;
+      margin-top: 10px;
+      margin-bottom: 25px;
+    }
+
+    /* Labels */
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    /* Form Inputs */
+    input[type="file"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 12px 0;
+      background-color: #007bff;
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button.analyzing {
+      background-color: #ffc107 !important;
+      color: #000 !important;
+    }
+
+    button.analyzed {
+      background-color: #28a745 !important;
+      color: #fff !important;
+    }
+
+    /* Results Section */
+    .results {
+      margin-top: 30px;
+      background-color: #f9f9f9;
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* Feedback Section */
+    .feedback-section {
+      margin-top: 20px;
+    }
+
+    .feedback-section details {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-left: 5px solid #007bff;
+      border-radius: 6px;
+    }
+
+    .feedback-section summary {
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #007bff;
+    }
+
+    .feedback-section ul {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .feedback-section li {
+      margin-bottom: 8px;
+    }
+
+    .feedback-section strong {
+      color: #135ca9;
+    }
+
+    /* Chart */
+    canvas {
+      margin-top: 30px;
+      max-width: 100%;
+    }
+
+    /* YouTube Video Section */
+    .video-section {
+      margin-top: 40px;
+      padding-top: 5px;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+
+    .video-section h3 {
+      text-align: center;
+      color: #333;
+    }
+
+    .video-section p {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 100%;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Back to Home Button */
+    .back-to-home-btn {
+      position: absolute;
+      top: 65px;
+      right: 90px;
+      background-color: #007bff;
+      color: hsl(0, 0%, 100%);
+      padding: 5px 15px;
+      font-size: 1.1rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .back-to-home-btn:hover {
+      background-color: #135ca9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-to-home-btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(26, 137, 69, 0.5);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .back-to-home-btn {
+        font-size: 1rem;
+        padding: 10px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="{{ url_for('index') }}"id="backToHomeBtn" class="back-to-home-btn">Back to Home</a>
+    <h1>AI Resume Analyzer</h1>
+
+    <div class="section">
+      <label>Upload Resume (PDF):</label>
+      <input type="file" id="resume" accept=".pdf" />
+    </div>
+
+    <div class="section">
+      <label>Job Description (Optional):</label>
+      <textarea id="jobDescription" placeholder="Paste job description here (optional)..."></textarea>
+    </div>
+
+    <button id="analyzeBtn" onclick="runResumeAnalysis()">Analyze Resume</button>
+
+    <div class="results" id="result" style="display: none;">
+      <h3>Analysis Result</h3>
+      <p><strong>Name:</strong> <span id="name"></span></p>
+      <p><strong>ATS Score:</strong> <span id="ats"></span>%</p>
+      <div class="feedback-section" id="feedbackFormatted"></div>
+      <canvas id="scoreChart"></canvas>
+
+      <!-- YouTube Videos -->
+      <div class="video-section">
+        <h3>How to Build a Powerful Resume</h3>
+        <p>Watch this video for expert tips on creating a standout resume:</p>
+        <div class="video-wrapper">
+          <iframe 
+            width="100%" 
+            height="400" 
+            src="https://www.youtube.com/embed/Tt08KmFfIYQ?rel=0" 
+            title="How to Build a Powerful Resume" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <div class="video-section">
+        <h3>Top Resume Writing Tips</h3>
+        <p>Improve your resume with these top techniques:</p>
+        <div class="video-wrapper">
+          <iframe 
+            width="100%" 
+            height="400" 
+            src="https://www.youtube.com/embed/y3R9e2L8I9E?rel=0" 
+            title="Resume Tips" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let chartInstance = null;
+
+    async function runResumeAnalysis() {
+      const resumeInput = document.getElementById("resume");
+      const jobDescription = document.getElementById("jobDescription").value;
+      const button = document.getElementById("analyzeBtn");
+
+      if (!resumeInput.files.length) {
+        alert("Please upload a resume.");
+        return;
+      }
+
+      button.textContent = "Analyzing Resume...";
+      button.classList.remove("analyzed");
+      button.classList.add("analyzing");
+      button.disabled = true;
+
+      const formData = new FormData();
+      formData.append("resume", resumeInput.files[0]);
+      formData.append("jobDescription", jobDescription);
+
+      try {
+        const response = await fetch("/analyze12", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          alert("Error: " + data.error);
+          button.textContent = "Analyze Resume";
+          button.classList.remove("analyzing");
+          button.disabled = false;
+          return;
+        }
+
+        document.getElementById("result").style.display = "block";
+        document.getElementById("name").textContent = data.name;
+        document.getElementById("ats").textContent = data.ats_score;
+        document.getElementById("feedbackFormatted").innerHTML = formatFeedback(data.feedback);
+
+        const ctx = document.getElementById("scoreChart").getContext("2d");
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: Object.keys(data.before),
+            datasets: [
+              {
+                label: "Before",
+                data: Object.values(data.before),
+                backgroundColor: "rgba(255, 99, 132, 0.6)"
+              },
+              {
+                label: "After",
+                data: Object.values(data.after),
+                backgroundColor: "rgba(54, 162, 235, 0.6)"
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: "Resume Quality Score Comparison"
+              },
+              legend: {
+                position: "top"
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        button.textContent = "Resume Analyzed ✔";
+        button.classList.remove("analyzing");
+        button.classList.add("analyzed");
+
+      } catch (error) {
+        alert("An error occurred while analyzing the resume.");
+        console.error(error);
+        button.textContent = "Analyze Resume";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function formatFeedback(rawText) {
+      const formatted = rawText
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n{2,}/g, "</p><p>")
+        .replace(/\n/g, "<br>");
+      return `<p>${formatted}</p>`;
+    }
+  </script>
+</body>
+</html>
